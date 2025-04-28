@@ -1,36 +1,25 @@
-package expression;
+package expression.generic.expressions;
 
-import java.math.BigDecimal;
-import java.util.List;
+public abstract class BinaryOperation<T> extends AbstractExpression<T> implements Operation {
+    private final TripleExpression<T> exp1;
+    private final TripleExpression<T> exp2;
 
-public abstract class BinaryOperation extends AbstractExpression implements Operation {
-    private final GeneralExpression exp1;
-    private final GeneralExpression exp2;
+    public BinaryOperation(TripleExpression<T> exp1, TripleExpression<T> exp2) {
+        super(exp1.getCalculator());
+        if (!calculator.equals(exp2.getCalculator())) {
+            throw new IllegalArgumentException("exp1 and exp2 must have same calculators");
+        }
 
-    public BinaryOperation(GeneralExpression exp1, GeneralExpression exp2) {
         this.exp1 = exp1;
         this.exp2 = exp2;
     }
 
     @Override
-    public int evaluate(int x) {
-        return doOperation(exp1.evaluate(x), exp2.evaluate(x));
-    }
-
-
-    @Override
-    public int evaluate(int x, int y, int z) {
+    public T evaluate(T x, T y, T z) {
         return doOperation(exp1.evaluate(x, y, z), exp2.evaluate(x, y, z));
     }
 
-    @Override
-    public int evaluate(List<Integer> variables) {
-        return doOperation(exp1.evaluate(variables), exp2.evaluate(variables));
-    }
-
-    protected abstract int doOperation(int a, int b);
-
-    protected abstract BigDecimal doOperation(BigDecimal a, BigDecimal b);
+    protected abstract T doOperation(T a, T b);
 
     @Override
     public void toString(StringBuilder builder) {
@@ -58,16 +47,16 @@ public abstract class BinaryOperation extends AbstractExpression implements Oper
     }
 
     private boolean needBrackets2() {
-        if (exp2 instanceof Operation exp) {
-            if (exp instanceof CombineIntoOne op) {
-                return !getClass().equals(op.getClass());
-            }
-
-            return getPriority() > exp.getPriority()
-                    || getPriority() == exp.getPriority()
-                    && (signRequiresBracket() || opRequiresBracket(exp));
+        if (!(exp2 instanceof Operation exp)) {
+            return false;
         }
-        return false;
+        if (exp instanceof CombineIntoOne op) {
+            return !getClass().equals(op.getClass());
+        }
+
+        return getPriority() > exp.getPriority()
+                || getPriority() == exp.getPriority()
+                && (signRequiresBracket() || opRequiresBracket(exp));
     }
 
     private boolean signRequiresBracket() {
@@ -75,7 +64,7 @@ public abstract class BinaryOperation extends AbstractExpression implements Oper
     }
 
     private boolean opRequiresBracket(Operation op) {
-        if (op instanceof BinaryOperation binOp) {
+        if (op instanceof BinaryOperation<?> binOp) {
             return !binOp.isDivisible();
         }
         return false;
@@ -87,7 +76,7 @@ public abstract class BinaryOperation extends AbstractExpression implements Oper
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BinaryOperation operation) {
+        if (obj instanceof BinaryOperation<?> operation) {
             return getClass().equals(operation.getClass())
                     && exp1.equals(operation.exp1)
                     && exp2.equals(operation.exp2);
@@ -97,6 +86,6 @@ public abstract class BinaryOperation extends AbstractExpression implements Oper
 
     @Override
     public int hashCode() {
-        return (32 * exp1.hashCode() + exp2.hashCode()) * 32 + getSign().hashCode();
+        return (32 * exp1.hashCode() + exp2.hashCode()) * 32 + getClass().hashCode();
     }
 }

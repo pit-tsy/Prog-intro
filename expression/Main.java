@@ -1,5 +1,6 @@
 package expression;
 
+import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -7,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         int x;
-        while (true) {
+        while(true) {
             try {
                 System.out.print("Enter x: ");
                 x = in.nextInt();

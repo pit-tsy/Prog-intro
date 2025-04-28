@@ -1,17 +1,17 @@
 package expression;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
-public class Const extends AbstractExpression {
+public class Const  extends AbstractExpression {
     private final Number value;
 
     public Const(int c) {
         this.value = c;
     }
 
-    public Const(BigDecimal c) {
-        this.value = c;
-    }
+    public Const(BigDecimal c) { this.value = c; }
 
     @Override
     public int evaluate(int x) {
@@ -19,8 +19,8 @@ public class Const extends AbstractExpression {
     }
 
     @Override
-    public BigDecimal evaluate(BigDecimal x) {
-        return (BigDecimal) value;
+    public int evaluate(List<Integer> variables) {
+        return value.intValue();
     }
 
     @Override

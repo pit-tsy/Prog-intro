@@ -1,34 +1,19 @@
-package expression;
+package expression.generic.expressions;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+public abstract class UnaryOperation<T> extends AbstractExpression<T> implements Operation {
+    TripleExpression<T> exp;
 
-public abstract class UnaryOperation extends  AbstractExpression implements Operation {
-    GeneralExpression exp;
-
-    public UnaryOperation(GeneralExpression exp) {
+    public UnaryOperation(TripleExpression<T> exp) {
+        super(exp.getCalculator());
         this.exp = exp;
     }
 
     @Override
-    public int evaluate(int x) {
-        return doOperation(exp.evaluate(x));
-    }
-
-    @Override
-    public int evaluate(int x, int y, int z) {
+    public T evaluate(T x, T y, T z) {
         return doOperation(exp.evaluate(x, y, z));
     }
 
-    @Override
-    public int evaluate(List<Integer> variables) {
-        return doOperation(exp.evaluate(variables));
-    }
-
-    protected abstract int doOperation(int x);
-
-    protected abstract BigDecimal doOperation(BigDecimal x);
+    protected abstract T doOperation(T x);
 
     @Override
     public void toMiniString(StringBuilder builder, boolean brackets) {
@@ -62,7 +47,7 @@ public abstract class UnaryOperation extends  AbstractExpression implements Oper
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof UnaryOperation operation) {
+        if (obj instanceof UnaryOperation<?> operation) {
             return getClass().equals(operation.getClass())
                     && operation.exp.equals(exp);
         }

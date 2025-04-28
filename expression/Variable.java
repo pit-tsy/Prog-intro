@@ -1,13 +1,25 @@
 package expression;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Variable extends AbstractExpression {
     private String var;
+    private int index = -1;
 
     public Variable(String var) {
         this.var = var;
+    }
+
+    public Variable(int index) {
+        this("$" + index, index);
+    }
+
+    public Variable(String var, int index) {
+        this.var = var;
+        this.index = index;
     }
 
     public Variable(char var) {
@@ -16,12 +28,6 @@ public class Variable extends AbstractExpression {
 
     @Override
     public int evaluate(int x) {
-        if (var.equals("x")) return x;
-        throw new IllegalStateException("Excepted : x. Got: " + var);
-    }
-
-    @Override
-    public BigDecimal evaluate(BigDecimal x) {
         if (var.equals("x")) return x;
         throw new IllegalStateException("Excepted : x. Got: " + var);
     }
@@ -58,5 +64,11 @@ public class Variable extends AbstractExpression {
     @Override
     public int hashCode() {
         return Objects.hash(var);
+    }
+
+    @Override
+    public int evaluate(List<Integer> variables) {
+        if (index < 0 || index >= variables.size()) throw new IllegalStateException("Index out of variables");
+        return variables.get(index);
     }
 }

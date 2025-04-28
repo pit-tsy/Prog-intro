@@ -2,39 +2,38 @@ package expression;
 
 import java.math.BigDecimal;
 
-public class Add extends BinaryOperation {
-
-    public Add(GeneralExpression exp1, GeneralExpression exp2) {
+public class LeftShift extends BinaryOperation {
+    public LeftShift(GeneralExpression exp1, GeneralExpression exp2) {
         super(exp1, exp2);
     }
 
     @Override
     protected int doOperation(int a, int b) {
-        return a + b;
+        return a << b;
     }
 
     @Override
     protected BigDecimal doOperation(BigDecimal a, BigDecimal b) {
-        return a.add(b);
+        throw new UnsupportedOperationException("unsupported bigDecimal operation");
     }
 
     @Override
     protected boolean isDivisible() {
-        return true;
+        return false;
     }
 
     @Override
     protected boolean isCommutative() {
-        return true;
+        return false;
     }
 
     @Override
-    public  int getPriority() {
-        return 1600;
+    public int getPriority() {
+        return 300;
     }
 
     @Override
     public String getSign() {
-        return "+";
+        return "<<";
     }
 }
